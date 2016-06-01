@@ -1,0 +1,34 @@
+{
+  "name": "znck/initium",
+  "type": "library",
+  "description": "Begin a new project with ease!",
+  "keywords": [
+    "znck",
+    "initium"
+  ],
+  "homepage": "https://github.com/znck/initium",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Rahul Kadyan",
+      "email": "hi@znck.me",
+      "homepage": "http://znck.me",
+      "role": "Developer"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Znck\\Initium\\": "src/"
+    }
+  },
+  "require": {
+    "php": "~7.0",
+    "symfony/console": "^3.1",
+    "symfony/process": "^3.1",
+    "guzzlehttp/guzzle": "^6.2"
+  },
+  "scripts": {
+    "test": "phpunit"
+  },
+  "bin": ["initium"]
+}
