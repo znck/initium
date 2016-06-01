@@ -7,22 +7,28 @@ class VariableReplacer
      */
     private $projectDirectory;
 
-    public function __construct(string $projectDirectory) {
+    public function __construct(string $projectDirectory)
+    {
         $this->projectDirectory = $projectDirectory;
     }
 
-    public function extractVariables() {
+    public function extractVariables()
+    {
         $variables = [];
         $this->operateOnAllFiles($variables, 'extract');
+
         return $variables;
     }
 
-    public function insertVariables(array $variables) {
+    public function insertVariables(array $variables)
+    {
         $this->operateOnAllFiles($variables, 'insert');
+
         return $variables;
     }
 
-    protected function extract(string $file, array &$variables) {
+    protected function extract(string $file, array &$variables)
+    {
         $subject = file_get_contents($file);
         preg_match_all('/:([A-Za-z0-9_]+)[^A-Za-z0-9_]/', $subject, $matches);
         foreach ($matches[1] as $match) {
@@ -30,7 +36,8 @@ class VariableReplacer
         }
     }
 
-    protected function insert(string $file, $variables) {
+    protected function insert(string $file, $variables)
+    {
         $subject = file_get_contents($file);
         foreach ($variables as $variable => $value) {
             $subject = str_replace(
@@ -42,7 +49,8 @@ class VariableReplacer
         file_put_contents($file, $subject);
     }
 
-    protected function operateOnAllFiles(array &$variables, string $callback) {
+    protected function operateOnAllFiles(array &$variables, string $callback)
+    {
         $directories = [$this->projectDirectory];
 
         while (count($directories)) {

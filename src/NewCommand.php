@@ -1,16 +1,16 @@
 <?php namespace Znck\Initium;
 
-use Symfony\Component\Console\Helper\QuestionHelper;
-use Symfony\Component\Console\Question\Question;
-use ZipArchive;
-use RuntimeException;
 use GuzzleHttp\Client;
-use Symfony\Component\Process\Process;
+use RuntimeException;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Process\Process;
+use ZipArchive;
 
 class NewCommand extends Command
 {
@@ -19,7 +19,8 @@ class NewCommand extends Command
      *
      * @return void
      */
-    protected function configure() {
+    protected function configure()
+    {
         $this
             ->setName('new')
             ->setDescription('Create a new project.')
@@ -31,12 +32,13 @@ class NewCommand extends Command
     /**
      * Execute the command.
      *
-     * @param  InputInterface  $input
-     * @param  OutputInterface $output
+     * @param InputInterface  $input
+     * @param OutputInterface $output
      *
      * @return void
      */
-    protected function execute(InputInterface $input, OutputInterface $output) {
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
         $repository = $this->getSkeleton($input->getArgument('source') ?? 'znck/skeleton');
 
         $this->verifyProjectDoesNotExist(
@@ -74,11 +76,12 @@ class NewCommand extends Command
     /**
      * Verify that the application does not already exist.
      *
-     * @param  string $directory
+     * @param string $directory
      *
      * @return void
      */
-    protected function verifyProjectDoesNotExist($directory, OutputInterface $output) {
+    protected function verifyProjectDoesNotExist($directory, OutputInterface $output)
+    {
         if (is_dir($directory)) {
             throw new RuntimeException('Project already exists!');
         }
@@ -89,21 +92,23 @@ class NewCommand extends Command
      *
      * @return string
      */
-    protected function makeFilename() {
+    protected function makeFilename()
+    {
         return getcwd().'/project_'.md5(time().uniqid()).'.zip';
     }
 
     /**
      * Download the temporary Zip to the given file.
      *
-     * @param  string $zipFile
-     * @param  string $repository
-     * @param  string $version
+     * @param string $zipFile
+     * @param string $repository
+     * @param string $version
      *
      * @return $this
      */
-    protected function download($zipFile, $repository, $version = 'master') {
-        $response = (new Client)->get("https://codeload.github.com/${repository}/zip/${version}");
+    protected function download($zipFile, $repository, $version = 'master')
+    {
+        $response = (new Client())->get("https://codeload.github.com/${repository}/zip/${version}");
 
         file_put_contents($zipFile, $response->getBody());
 
@@ -113,13 +118,14 @@ class NewCommand extends Command
     /**
      * Extract the zip file into the given directory.
      *
-     * @param  string $zipFile
-     * @param  string $directory
+     * @param string $zipFile
+     * @param string $directory
      *
      * @return $this
      */
-    protected function extract($zipFile, $directory) {
-        $archive = new ZipArchive;
+    protected function extract($zipFile, $directory)
+    {
+        $archive = new ZipArchive();
 
         $archive->open($zipFile);
 
@@ -143,11 +149,12 @@ class NewCommand extends Command
     /**
      * Clean-up the Zip file.
      *
-     * @param  string $zipFile
+     * @param string $zipFile
      *
      * @return $this
      */
-    protected function cleanUp($zipFile) {
+    protected function cleanUp($zipFile)
+    {
         @chmod($zipFile, 0777);
 
         @unlink($zipFile);
@@ -162,7 +169,8 @@ class NewCommand extends Command
      *
      * @return string
      */
-    protected function getVersion($input) {
+    protected function getVersion($input)
+    {
         if ($input->getOption('dev')) {
             return 'develop';
         }
@@ -175,7 +183,8 @@ class NewCommand extends Command
      *
      * @return string
      */
-    protected function findComposer() {
+    protected function findComposer()
+    {
         if (file_exists(getcwd().'/composer.phar')) {
             return '"'.PHP_BINARY.'" composer.phar';
         }
@@ -183,11 +192,13 @@ class NewCommand extends Command
         return 'composer';
     }
 
-    protected function getSkeleton($param) {
+    protected function getSkeleton($param)
+    {
         return count(explode('/', $param)) === 2 ? $param : 'znck/'.$param;
     }
 
-    protected function replaceVariables(string $directory, InputInterface $input, OutputInterface $output) {
+    protected function replaceVariables(string $directory, InputInterface $input, OutputInterface $output)
+    {
         $replacer = new VariableReplacer($directory);
         $variables = $replacer->extractVariables();
 
@@ -202,7 +213,8 @@ class NewCommand extends Command
         $replacer->insertVariables($values);
     }
 
-    protected function anticipateDefault($name) {
+    protected function anticipateDefault($name)
+    {
         // May be some variables can be auto-detected.
     }
 }
